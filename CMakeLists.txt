@@ -32,36 +32,28 @@ CMAKE_C_COMPILER等变量记录的是编译器等的信息, 修改这些变量�
 
 foreach(var item1 item2 item3...) ... endforeach() 表示一个遍历语句
 foreach 还有range的迭代方式, 可以参见文档 foreach(var strat [end] [step])
+
+add_subdirectory添加一个子目录 注意: 是添加子目录而不是子程序 (子程序需要使用超级构建)
 =================================================================]]
 
 cmake_minimum_required(VERSION 3.20)  # 设定cmake的版本, 当运行该CMakeLists.txt的CMake解释器低于该版本是将会报错
 project(cmake-learn LANGUAGES C)  # 设置项目的名称
 
-option(BUILD_LIBRARY "Build msg library" ON)  # 添加一个选项, 寻味是否构建库
-
 add_executable(hello main.c)  # 编译一个可执行程序, 使用main.c为源代码, 可执行程序的名字为hello
 
+option(BUILD_LIBRARY "Build msg library" ON)  # 添加一个选项, 寻味是否构建库
+
 if (BUILD_LIBRARY)
-    option(BUILD_SHARED_LIBRARY "Build shared library" ON)  # 添加一个选项, 寻味是否构建库
-    if (BUILD_SHARED_LIBRARY)
-        add_library(msg SHARED "")  # 生成一个动态库
-    else()
-        add_library(msg STATIC "")  # 生成一个静态库
-    endif()
-    target_sources(msg  # 追加源文件到msg中, 源文件被定义为PUBLIC类型
-        PRIVATE  # 何为PRIVATE和PUBLIC可以参见上文注释
-            msg.c msgBeautiful.c _msg.h
-        PUBLIC
-            msg.h
-    )
+    add_subdirectory(msg)
     target_link_libraries(hello msg)  # hello链接msg
 else()  # 不构建库, 库的代码被直接写到hello中
     target_sources(hello
         PRIVATE
-            msg.c msgBeautiful.c _msg.h
+            msg/msg.c msg/msgBeautiful.c msg/_msg.h
         PUBLIC
-            msg.h
-    )
+            include/msg.h
+        )
+    target_include_directories(hello PUBLIC include)
 endif()
 
 message(STATUS "Hello, CMake!")  # 显示一条STATUS信息
