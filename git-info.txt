@@ -4,7 +4,11 @@
 提交的hash是滞后写入的
 
 2021/9/15
+feat: 使用include
+
+2021/9/15
 feat: 把msg移动到子目录
+hash: 04b8fcbe
 注意: windows编译后, .dll库会在构建目录的msg文件夹下, 需要手动移动到与hello.exe同级文件夹下
 CMake自动构建的解决方式参见后文
 
