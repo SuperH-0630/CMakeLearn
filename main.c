@@ -1,6 +1,8 @@
 ﻿#include <stdio.h>
+#include "msg.h"
 
 int main(int argc, char **argv) {
-    printf("Hello World\n");
+    printMSG("I am msg");
+    printMSGBeautiful("I am msg beautiful");
     return 0;
 }
