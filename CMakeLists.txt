@@ -16,17 +16,44 @@ INTERFACE和PRIVATE: 除了PUBLIC, 还有这两种类型.
     INTERFACE表示只添加到依赖msg的目标中(例如hello)
     PUBLIC = PRIVATE + INTERFACE
 target_link_libraries用于添加一个库链接
+
+if() ... elseif() ... else() ... endif() 表示一个条件语句
+option 表示添加一个CMake参数
+    注意: 在cmake-gui只有当该option被运算时, 才会将option显示出来
+    例如, 将option(BUILD_LIBRARY "Build msg library" ON)修改为option(BUILD_LIBRARY "Build msg library" OFF)
+        初次配置CMake时便将不会显示BUILD_SHARED_LIBRARY选项, 因为BUILD_LIBRARY为OFF
+        option(BUILD_SHARED_LIBRARY "Build shared library" ON)没有执行
+    在命令行则可以直接通过-Dxxx=yyy来使用参数
+add_library添加的源码默认为PRIVATE
+
 =================================================================]]
 
 cmake_minimum_required(VERSION 3.20)  # 设定cmake的版本, 当运行该CMakeLists.txt的CMake解释器低于该版本是将会报错
 project(cmake-learn LANGUAGES C)  # 设置项目的名称
 
+option(BUILD_LIBRARY "Build msg library" ON)  # 添加一个选项, 寻味是否构建库
+
 add_executable(hello main.c)  # 编译一个可执行程序, 使用main.c为源代码, 可执行程序的名字为hello
 
-add_library(msg msg.c msgBeautiful.c _msg.h)  # 生成一个库文件
-target_sources(msg  # 追加源文件到msg中, 源文件被定义为PUBLIC类型
-    PUBLIC
-        msg.h
-)
-
-target_link_libraries(hello msg)  # hello链接msg
+if (BUILD_LIBRARY)
+    option(BUILD_SHARED_LIBRARY "Build shared library" ON)  # 添加一个选项, 寻味是否构建库
+    if (BUILD_SHARED_LIBRARY)
+        add_library(msg SHARED "")  # 生成一个动态库
+    else()
+        add_library(msg STATIC "")  # 生成一个静态库
+    endif()
+    target_sources(msg  # 追加源文件到msg中, 源文件被定义为PUBLIC类型
+        PRIVATE  # 何为PRIVATE和PUBLIC可以参见上文注释
+            msg.c msgBeautiful.c _msg.h
+        PUBLIC
+            msg.h
+    )
+    target_link_libraries(hello msg)  # hello链接msg
+else()  # 不构建库, 库的代码被直接写到hello中
+    target_sources(hello
+        PRIVATE
+            msg.c msgBeautiful.c _msg.h
+        PUBLIC
+            msg.h
+    )
+endif()
