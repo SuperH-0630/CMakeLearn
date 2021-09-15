@@ -82,7 +82,7 @@ add_custom_command(TARGET bar
 
 if(BUILD_LIBRARY)
 # 为了与上述对比测试, hello是有link程序的
-add_custom_command(TARGET hello
+    add_custom_command(TARGET hello
         PRE_LINK  # 编译目标之后, 调用链接器或归档器之前执行命令.
         COMMAND ${CMAKE_COMMAND} "-E" "echo" "executing a PRE_LINK command (hello)"
         COMMENT "This command is PRE_LINK build (hello)"

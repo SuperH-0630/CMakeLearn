@@ -18,6 +18,7 @@ INTERFACE和PRIVATE: 除了PUBLIC, 还有这两种类型.
 target_link_libraries用于添加一个库链接
 
 if() ... elseif() ... else() ... endif() 表示一个条件语句
+    注意: if的条件访问变量时不需要${}符号, 例如 if(var1)实际上就是条件时var1的值而不是var1字符串本身 (if已经自动解引用变量, 不需要再显式使用${})
 option 表示添加一个CMake参数
     注意: 在cmake-gui只有当该option被运算时, 才会将option显示出来
     例如, 将option(BUILD_LIBRARY "Build msg library" ON)修改为option(BUILD_LIBRARY "Build msg library" OFF)
@@ -123,4 +124,9 @@ if(Python3_FOUND)
 endif()
 
 include(cmake/custom_target_test.cmake)  # 添加custom_target_test测试程序
+
 add_subdirectory(hello2)  # 构建hello2
+
+include(cmake/func.cmake)
+fun1(STATUS "I am fun1 (out)")  # include没有新增变量空间, 其中定义的函数可以在外面再次调用
+mac1(STATUS "I am mac1 (out)" 1 2)
