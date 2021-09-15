@@ -16,6 +16,11 @@ hash: 34f6bafb
 注意: 目前在windows仅支持MinGW编译, 不支持MSVC
 原因: 因为MSVC编译的动态库, 符号都是默认对外部可见的
 实际上可以添加CMake指令令MSVC符号默认对外都可见, 但目前项目还未见占到这一步
+---
+添加: set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)到CMakeLists.txt中即可使用MSVC进行编译
+该变量表示令MSVC编译的动态库中所有符号都可见
+但是该操作不是一个很好的做法, 后续会有更好的处理方式
+CMakeLists.txt中默认是不添加该语句的, 需要手动添加
 
 2021/9/15
 feat: 添加了hello程序
