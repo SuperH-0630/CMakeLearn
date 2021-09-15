@@ -38,6 +38,8 @@ add_subdirectory添加一个子目录 注意: 是添加子目录而不是子程�
 include 可以导入文件来执行(一般是.cmake文件), 并且不会生成新的变量空间
 
 可以设置CMAKE_ARCHIVE_OUTPUT_DIRECTORY, CMAKE_RUNTIME_OUTPUT_DIRECTORY等变量来控制add_library, add_executable对目标的输出位置
+
+execute_process  在CMake配置时运行程序
 =================================================================]]
 
 cmake_minimum_required(VERSION 3.20)  # 设定cmake的版本, 当运行该CMakeLists.txt的CMake解释器低于该版本是将会报错
@@ -100,3 +102,20 @@ endif()
 # 一般情况下, 在顶层的CMakeLists.txt执行enable_testing
 enable_testing()
 add_subdirectory(test)  # 添加测试
+
+if(Python3_FOUND)
+    execute_process(  # 在CMake配置时运行程序
+            COMMAND  # 代码会按顺序执行
+                ${Python3_EXECUTABLE} "-c" "print(\"I am execute_process\");a"  # 打印内容后, 访问不存在的变量a
+            RESULT_VARIABLE re  # 存储结果
+            OUTPUT_VARIABLE _stdout  # stdout的输出内容
+            ERROR_VARIABLE _stderr  # stderr的输出内容
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_STRIP_TRAILING_WHITESPACE
+    )
+
+    message(STATUS "result = ${re}")  # 因为访问不存在的变量a, 故会诱发python错误, result = 1
+    message(STATUS "stdout = ${_stdout}")
+endif()
+
+include(cmake/custom_target_test.cmake)  # 添加custom_target_test测试程序
