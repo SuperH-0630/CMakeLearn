@@ -36,15 +36,30 @@ foreach 还有range的迭代方式, 可以参见文档 foreach(var strat [end] [
 add_subdirectory添加一个子目录 注意: 是添加子目录而不是子程序 (子程序需要使用超级构建)
 
 include 可以导入文件来执行(一般是.cmake文件), 并且不会生成新的变量空间
+
+可以设置CMAKE_ARCHIVE_OUTPUT_DIRECTORY, CMAKE_RUNTIME_OUTPUT_DIRECTORY等变量来控制add_library, add_executable对目标的输出位置
 =================================================================]]
 
 cmake_minimum_required(VERSION 3.20)  # 设定cmake的版本, 当运行该CMakeLists.txt的CMake解释器低于该版本是将会报错
 project(cmake-learn LANGUAGES C)  # 设置项目的名称
 
+#[[
+定义输出目录
+GNUInstallDirs中定义了GNU标准的输出文件夹名字, 例如:
+CMAKE_INSTALL_LIBDIR lib
+CMAKE_INSTALL_BINDIR bin
+]]
+include(GNUInstallDirs)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  # 静态库的输出路径
+        ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  # 动态库(或者动态库的导入文件)的输出路径
+        ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
+        ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})  # 可执行文件(以及.dll)的输出路径
+
 add_executable(hello main.c)  # 编译一个可执行程序, 使用main.c为源代码, 可执行程序的名字为hello
 
 option(BUILD_LIBRARY "Build msg library" ON)  # 添加一个选项, 寻味是否构建库
-
 if (BUILD_LIBRARY)
     add_subdirectory(msg)
     target_link_libraries(hello msg)  # hello链接msg
