@@ -1,0 +1,12 @@
+﻿#ifndef CMAKE_HELLO2_H
+#define CMAKE_HELLO2_H
+
+#define def1 @def1@
+#define def2 ${def2}
+
+#cmakedefine def3
+#cmakedefine def4
+#cmakedefine01 def5
+#cmakedefine01 def6
+
+#endif // CMAKE_HELLO2_H

@@ -1,0 +1,7 @@
+﻿#include "stdio.h"
+#include "hello2.h"
+
+int main() {
+    printf("Hello, @name@. I am %s\n", @who@);
+    return 0;
+}

@@ -4,6 +4,10 @@
 提交的hash是滞后写入的
 
 2021/9/16
+feat: 添加hello2库
+hello2库使用了自动生成项目
+
+2021/9/16
 feat: 对比部分CMake变量(CMAKE_CURRENT_: LIST_FILE, LIST_DIR, SOURCE_DIR)
 hash: af9e49e0
 对比CMAKE_CURRENT_LIST_FILE, CMAKE_CURRENT_LIST_DIR, CMAKE_CURRENT_SOURCE_DIR的区别(对于.cmake文件)

@@ -123,3 +123,4 @@ if(Python3_FOUND)
 endif()
 
 include(cmake/custom_target_test.cmake)  # 添加custom_target_test测试程序
+add_subdirectory(hello2)  # 构建hello2
