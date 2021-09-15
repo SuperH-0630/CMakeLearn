@@ -4,6 +4,9 @@
 ]]
 
 message(STATUS "include print_info")
+message(STATUS "print_info CMAKE_CURRENT_LIST_FILE = ${CMAKE_CURRENT_LIST_FILE}")  # 输出的是本.cmake文件的位置
+message(STATUS "print_info CMAKE_CURRENT_LIST_DIR = ${CMAKE_CURRENT_LIST_DIR}")  # 输出的是本.cmake所在目录
+message(STATUS "print_info CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")  # 输出的是调用该.cmake文件的CMakeLists.txt所在目录
 
 include_guard(GLOBAL)  # 检测该文件是否重复导入, 若是非第一次导入则不再允许下面的代码
 

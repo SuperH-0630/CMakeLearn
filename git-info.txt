@@ -4,6 +4,10 @@
 提交的hash是滞后写入的
 
 2021/9/16
+feat: 对比部分CMake变量(CMAKE_CURRENT_: LIST_FILE, LIST_DIR, SOURCE_DIR)
+对比CMAKE_CURRENT_LIST_FILE, CMAKE_CURRENT_LIST_DIR, CMAKE_CURRENT_SOURCE_DIR的区别(对于.cmake文件)
+
+2021/9/16
 feat: 添加设定语言标准的代码
 
 2021/9/16
