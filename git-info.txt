@@ -4,5 +4,11 @@
 提交的hash是滞后写入的
 
 2021/9/15
+feat: 添加了hello程序
+hello程序运行将在stdout输出HelloWorld信息
+同时, 写入了最基本的CMakeLists.txt文件
+
+2021/9/15
 feat: 添加了基础的文件
+hash: 2235c46f
 该项目库将被开始启用, 关于项目的介绍请参见README文档
