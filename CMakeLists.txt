@@ -95,3 +95,8 @@ if(Python3_FOUND)
 else()
     message(WARNING "Python3 Not Found")
 endif()
+
+# 启用测试
+# 一般情况下, 在顶层的CMakeLists.txt执行enable_testing
+enable_testing()
+add_subdirectory(test)  # 添加测试
