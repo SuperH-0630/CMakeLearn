@@ -31,6 +31,7 @@ CMAKE_C_COMPILER等变量记录的是编译器等的信息, 修改这些变量�
 也可以通过-DCMAKE_C_COMPILER=xxx的方式在命令行修改这些选项
 
 foreach(var item1 item2 item3...) ... endforeach() 表示一个遍历语句
+foreach 还有range的迭代方式, 可以参见文档 foreach(var strat [end] [step])
 =================================================================]]
 
 cmake_minimum_required(VERSION 3.20)  # 设定cmake的版本, 当运行该CMakeLists.txt的CMake解释器低于该版本是将会报错
@@ -148,30 +149,44 @@ CMAKE_SYSTEM_NAME, CMAKE_C_COMPILER_ID, CMAKE_HOST_SYSTEM_PROCESSOR并不总是�
 
 # 查询主机信息
 # 使用cmake_host_system_information, RESULT参数是结果存储的位置, QUERY参数表示需要获取的信息
-foreach(key
-        IN ITEMS
-        NUMBER_OF_LOGICAL_CORES
-        NUMBER_OF_PHYSICAL_CORES
-        TOTAL_VIRTUAL_MEMORY
-        AVAILABLE_VIRTUAL_MEMORY
-        TOTAL_PHYSICAL_MEMORY
-        AVAILABLE_PHYSICAL_MEMORY
-        IS_64BIT
-        HAS_FPU
-        HAS_MMX
-        HAS_MMX_PLUS
-        HAS_SSE
-        HAS_SSE2
-        HAS_SSE_FP
-        HAS_SSE_MMX
-        HAS_AMD_3DNOW
-        HAS_AMD_3DNOW_PLUS
-        HAS_IA64
-        OS_NAME
-        OS_RELEASE
-        OS_VERSION
-        OS_PLATFORM
-        )
-    cmake_host_system_information(RESULT re QUERY ${key})
-    message(STATUS "cmake_host_system_information ${key} = ${re}")
-endforeach()
+option(PRINT_SYS_INFO "Print system information" OFF)
+if(PRINT_SYS_INFO)
+    foreach(key
+            IN ITEMS
+            NUMBER_OF_LOGICAL_CORES
+            NUMBER_OF_PHYSICAL_CORES
+            TOTAL_VIRTUAL_MEMORY
+            AVAILABLE_VIRTUAL_MEMORY
+            TOTAL_PHYSICAL_MEMORY
+            AVAILABLE_PHYSICAL_MEMORY
+            IS_64BIT
+            HAS_FPU
+            HAS_MMX
+            HAS_MMX_PLUS
+            HAS_SSE
+            HAS_SSE2
+            HAS_SSE_FP
+            HAS_SSE_MMX
+            HAS_AMD_3DNOW
+            HAS_AMD_3DNOW_PLUS
+            HAS_IA64
+            OS_NAME
+            OS_RELEASE
+            OS_VERSION
+            OS_PLATFORM
+            )
+        cmake_host_system_information(RESULT re QUERY ${key})
+        message(STATUS "cmake_host_system_information ${key} = ${re}")
+    endforeach()
+endif()
+
+# 关于find_package还有Module模式Config模式等之分
+find_package(Python3 COMPONENTS Interpreter Development)  # 通过FindPython3.cmake文件(CMake内置的文件)寻找Python3的可执行程序
+
+if(Python3_FOUND)
+    message("Python3_EXECUTABLE = ${Python3_EXECUTABLE}")  # Python3的可执行程序
+    message("Python3_LIBRARIES = ${Python3_LIBRARIES}")  # Python3的库(Windows上为导入库)
+    message("Python3_RUNTIME_LIBRARY_DIRS = ${Python3_RUNTIME_LIBRARY_DIRS}")  # Python3的运行时库(Windows上为.dll)
+else()
+    message(WARNING "Python3 Not Found")
+endif()

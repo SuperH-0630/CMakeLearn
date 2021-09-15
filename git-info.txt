@@ -4,7 +4,13 @@
 提交的hash是滞后写入的
 
 2021/9/15
+feat: 通过find_package搜索python
+find_package使用CMake内置的FindPython3.cmake文件, 使用模块模式
+Config模式和自定以FindXXX.cmake可以参见后文
+
+2021/9/15
 feat: 添加信息输出
+hash: ff65c1dc
 
 2021/9/15
 feat: 可以选择是否编译库以及编译库的类型
