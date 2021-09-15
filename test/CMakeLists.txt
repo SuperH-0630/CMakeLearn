@@ -72,38 +72,44 @@ set_tests_properties(test_end PROPERTIES FIXTURES_CLEANUP "test_a_")
 set_tests_properties(test1 PROPERTIES TIMEOUT 10)  # 设置test的TIMEOUT, 即测试时间小于10s
 set_tests_properties(test_fail PROPERTIES WILL_FAIL true)  # test_fail以程序运行失败作为测试成功的条件
 
-# 测试编译器是否能正常运作的程序 (与ctest不同, try_compile在CMake配置期间就运行了)
-# 测试是否可以通过编译
-try_compile(
-        build_test1
-        ${CMAKE_BINARY_DIR}/try_compile  # 编译输出的位置
-        SOURCES
-            ${CMAKE_CURRENT_SOURCE_DIR}/build_test.c  # 源文件
-)
-message(STATUS "build_test1 = ${build_test1}")
+option(TEST_COMPILE "try compile" OFF)
+if (TEST_COMPILE)
+    # 测试编译器是否能正常运作的程序 (与ctest不同, try_compile在CMake配置期间就运行了)
+    # 测试是否可以通过编译
+    try_compile(
+            build_test1
+            ${CMAKE_BINARY_DIR}/try_compile  # 编译输出的位置
+            SOURCES
+                ${CMAKE_CURRENT_SOURCE_DIR}/build_test.c  # 源文件
+    )
+    message(STATUS "build_test1 = ${build_test1}")
 
-try_run(run_test1 run_test1_build_res
-        ${CMAKE_BINARY_DIR}/try_compile  # 编译输出的位置
-        ${CMAKE_CURRENT_SOURCE_DIR}/build_test.c  # 源文件(仅支持一个)
-)
+    include(CheckCSourceCompiles)
+    # check_c_source_compiles本质是try_compiles的一层封装
+    check_c_source_compiles( "int main(){return 0;}" build_test2)
+    check_c_source_compiles( "int main(){return 0}" build_test3)  # 错误, 遗漏分号
 
-message(STATUS "run_test1 = ${run_test1}")
-message(STATUS "run_test1_build_res = ${run_test1_build_res}")
+    message(STATUS "build_test2 = ${build_test2}")  # 输出1
+    message(STATUS "build_test3 = ${build_test3}")  # 输出空字符串
+endif()
 
-include(CheckCSourceCompiles)
-# check_c_source_compiles本质是try_compiles的一层封装
-check_c_source_compiles( "int main(){return 0;}" build_test2)
-check_c_source_compiles( "int main(){return 0}" build_test3)  # 错误, 遗漏分号
+option(TEST_RUN "try run" OFF)
+if (TEST_RUN)
+    try_run(run_test1 run_test1_build_res
+            ${CMAKE_BINARY_DIR}/try_compile  # 编译输出的位置
+            ${CMAKE_CURRENT_SOURCE_DIR}/build_test.c  # 源文件(仅支持一个)
+    )
 
-message(STATUS "build_test2 = ${build_test2}")  # 输出1
-message(STATUS "build_test3 = ${build_test3}")  # 输出空字符串
+    message(STATUS "run_test1 = ${run_test1}")
+    message(STATUS "run_test1_build_res = ${run_test1_build_res}")
 
-include(CheckCSourceRuns)
-# check_c_source_runs本质是try_run的一层封装
-check_c_source_runs( "int main(){return 0;}" run_test2)
-check_c_source_runs( "int main(){return 0}" run_test3)  # 错误, 遗漏分号
-check_c_source_runs( "int main(){return 1;}" run_test4)  # 执行错误
+    include(CheckCSourceRuns)
+    # check_c_source_runs本质是try_run的一层封装
+    check_c_source_runs( "int main(){return 0;}" run_test2)
+    check_c_source_runs( "int main(){return 0}" run_test3)  # 错误, 遗漏分号
+    check_c_source_runs( "int main(){return 1;}" run_test4)  # 执行错误
 
-message(STATUS "run_test2 = ${run_test2}")  # 输出1
-message(STATUS "run_test3 = ${run_test3}")  # 输出空字符串
-message(STATUS "run_test4 = ${run_test4}")  # 输出空字符串
+    message(STATUS "run_test2 = ${run_test2}")  # 输出1
+    message(STATUS "run_test3 = ${run_test3}")  # 输出空字符串
+    message(STATUS "run_test4 = ${run_test4}")  # 输出空字符串
+endif()

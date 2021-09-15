@@ -44,6 +44,10 @@ execute_process  在CMake配置时运行程序
 
 cmake_minimum_required(VERSION 3.20)  # 设定cmake的版本, 当运行该CMakeLists.txt的CMake解释器低于该版本是将会报错
 project(cmake-learn LANGUAGES C)  # 设置项目的名称
+set(CMAKE_C_STANDARD 11)  # 设置C标准为C11
+set(C_EXTENSIONS OFF)  # 不使用编译器扩展
+set(C_STANDARD_REQUIRED OFF)  # 当C_STANDARD_REQUIRED设置为某个C标准时, 则表示编译器必须支持该标准
+                              # 设置为OFF时会寻找CMAKE_C_STANDARD指定的标准, 或与他最接近的下一个标准
 
 #[[
 定义输出目录
