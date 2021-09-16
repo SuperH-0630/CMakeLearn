@@ -215,20 +215,5 @@ else()  # 非windows操作系统, 设置rpath
     unset(_rpath)
 endif()
 
-install(
-    TARGETS
-        msg
-    ARCHIVE
-        DESTINATION ${INSTALL_LIBDIR}
-    RUNTIME
-        DESTINATION ${INSTALL_BINDIR}
-    LIBRARY
-        DESTINATION ${INSTALL_LIBDIR}
-    PUBLIC_HEADER
-        DESTINATION ${INSTALL_INCLUDEDIR}
-    RESOURCE
-        DESTINATION ${INSTALL_RESOURCEDIR}
-)
-
 install(SCRIPT cmake/install_info.cmake)  # 安装时执行install_info.cmake脚本
 install(CODE "message(STATUS \"CMakeLists.txt: I am CODE\")")  # 安装时执行指定CMake命令

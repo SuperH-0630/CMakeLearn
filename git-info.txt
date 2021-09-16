@@ -4,7 +4,11 @@
 提交的hash是滞后写入的
 
 2021/9/17
+feat: 添加export
+
+2021/9/17
 feat: 添加导出头文件
+hash: 3bc10d87
 在(34f6bafb)中所指的set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)问题在此得到解决
 因为已经指定导出的符号, 因此MSVC编译不在有问题
 原本的问题是: 没有指定导出的符号, 而MSVC又默认不导出任何符号, 导致动态库无任何导出符号而无法使用
