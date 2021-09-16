@@ -3,8 +3,12 @@
 该文档包含了每次git提交的详细信息
 提交的hash是滞后写入的
 
+2021/9/17
+feat: 添加安装程序
+
 2021/9/16
-feat: 添加了函数和宏测试代码
+feat: 添加函数和宏测试代码
+hash: 4d35e6b9
 
 2021/9/16
 feat: 添加hello2库
@@ -29,7 +33,7 @@ feat: 添加自定义目标和命令的测试
 hash: 4f0f1442
 
 2021/9/15
-feat: 添加了测试程序
+feat: 添加测试程序
 hash: 650bf9c5
 
 2021/9/15
@@ -74,12 +78,12 @@ hash: 34f6bafb
 CMakeLists.txt中默认是不添加该语句的, 需要手动添加
 
 2021/9/15
-feat: 添加了hello程序
+feat: 添加hello程序
 hash: ed1c6c1b
 hello程序运行将在stdout输出HelloWorld信息
 同时, 写入了最基本的CMakeLists.txt文件
 
 2021/9/15
-feat: 添加了基础的文件
+feat: 添加基础的文件
 hash: 2235c46f
 该项目库将被开始启用, 关于项目的介绍请参见README文档

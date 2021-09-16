@@ -40,15 +40,20 @@ include 可以导入文件来执行(一般是.cmake文件), 并且不会生成�
 
 可以设置CMAKE_ARCHIVE_OUTPUT_DIRECTORY, CMAKE_RUNTIME_OUTPUT_DIRECTORY等变量来控制add_library, add_executable对目标的输出位置
 
-execute_process  在CMake配置时运行程序
+execute_process 在CMake配置时运行程序
+add_custom_command 添加自定义命令
+add_custom_target 添加自定义目标
+
+file 指令主要处理文件IO相关的操作
+list 指令主要处理列表相关的操作
 =================================================================]]
 
 cmake_minimum_required(VERSION 3.20)  # 设定cmake的版本, 当运行该CMakeLists.txt的CMake解释器低于该版本是将会报错
 project(cmake-learn LANGUAGES C)  # 设置项目的名称
 set(CMAKE_C_STANDARD 11)  # 设置C标准为C11
 set(C_EXTENSIONS OFF)  # 不使用编译器扩展
-set(C_STANDARD_REQUIRED OFF)  # 当C_STANDARD_REQUIRED设置为某个C标准时, 则表示编译器必须支持该标准
-                              # 设置为OFF时会寻找CMAKE_C_STANDARD指定的标准, 或与他最接近的下一个标准
+set(C_STANDARD_REQUIRED OFF)  # 当C_STANDARD_REQUIRED设置为ON时, 则表示编译器必须支持CMAKE_C_STANDARD指定的标准
+                              # 设置为OFF时会寻找CMAKE_C_STANDARD指定的标准, 或编译器支持的与他最接近的下一个标准
 
 #[[
 定义输出目录
@@ -71,6 +76,7 @@ if (BUILD_LIBRARY)
     add_subdirectory(msg)
     target_link_libraries(hello msg)  # hello链接msg
 else()  # 不构建库, 库的代码被直接写到hello中
+    add_library(msg INTERFACE)  # 接口库
     target_sources(hello
         PRIVATE
             msg/msg.c msg/msgBeautiful.c msg/_msg.h
@@ -130,3 +136,83 @@ add_subdirectory(hello2)  # 构建hello2
 include(cmake/func.cmake)
 fun1(STATUS "I am fun1 (out)")  # include没有新增变量空间, 其中定义的函数可以在外面再次调用
 mac1(STATUS "I am mac1 (out)" 1 2)
+
+# 设定安装的目录
+set(INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} CACHE PATH "Installation directory for libraries")
+set(INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR} CACHE PATH "Installation directory for executables")
+set(INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE PATH "Installation directory for header files")
+if(WIN32 AND NOT CYGWIN)
+    set(DEF_INSTALL_CMAKEDIR cmake)
+else()
+    set(DEF_INSTALL_CMAKEDIR share/cmake/${PROJECT_NAME})  # unix类系统(Unix, Linux, MacOS, Cygwin等)把cmake文件安装到指定的系统的cmake文件夹中
+endif()
+set(INSTALL_CMAKEDIR ${DEF_INSTALL_CMAKEDIR} CACHE PATH "Installation directory for CMake files")
+unset(DEF_INSTALL_CMAKEDIR)
+
+# 报告安装路径
+foreach(p LIB BIN INCLUDE CMAKE)
+    message(STATUS "Installing ${CMAKE_INSTALL_PREFIX}/${INSTALL_${p}DIR}")
+endforeach()
+
+install(
+    TARGETS
+        hello
+        hello2
+    ARCHIVE
+        DESTINATION ${INSTALL_LIBDIR}
+    RUNTIME
+        DESTINATION ${INSTALL_BINDIR}
+    LIBRARY
+        DESTINATION ${INSTALL_LIBDIR}
+    PUBLIC_HEADER
+        DESTINATION ${INSTALL_INCLUDEDIR}/hello
+)
+
+if(WIN32)  # windows操作系统, 需要赋值dll到指定位置
+    #[[
+        因为windows的.dll需要和可执行文件在一起, 因此此处添加复制构建目录中的.dll
+        当dll是由CMake用add_library生成时, 可以直接使用install该target即可将dll复制到对应目录
+        若dll不是由CMake用add_library生成或没有对该target执行install时, 则需要手动复制.dll(否则无法运行)
+
+        该例中, msg库已经使用install安装, 因此下面的步骤其实是不必需要
+    ]]
+    include(cmake/DLLFind.cmake)
+    dll_find(_dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    message(STATUS "Windows dll = ${_dll}")
+    install(FILES ${_dll} DESTINATION ${INSTALL_BINDIR})
+else()  # 非windows操作系统, 设置rpath
+    file(RELATIVE_PATH _rel ${CMAKE_INSTALL_PREFIX}/${INSTALL_BINDIR} ${CMAKE_INSTALL_PREFIX})  # 获得${CMAKE_INSTALL_PREFIX}相对于${CMAKE_INSTALL_PREFIX}/${INSTALL_BINDIR}的路径
+    if(APPLE)
+        set(_rpath_base "@loader_path/${_rel}")  # MacOS使用@loader_path表示可执行文件的位置
+    else()
+        set(_rpath_base "\$ORIGIN/${_rel}")  # Unix-like使用$ORIGIN表示可执行文件的位置
+    endif()
+    file(TO_NATIVE_PATH "${_rpath_base}/${INSTALL_LIBDIR}" _rpath)  # 转换为系统原生的操作路径
+    message(STATUS "rpath = ${_rpath}")
+    set_target_properties(hello hello2
+                          PROPERTIES
+                              MACOSX_RPATH ON
+                              SKIP_BUILD_RPATH OFF  # OFF: 构建对象也使用rpath
+                              BUILD_WITH_INSTALL_RPATH OFF  # OFF: build和install使用不同的rpath
+                              INSTALL_RPATH "${_rpath}"  # INSTALL的rpath, Build的rpath通过BUILD_RPATH设定
+                          )
+    unset(_rel)
+    unset(_rpath_base)
+    unset(_rpath)
+endif()
+
+install(
+    TARGETS
+        msg
+    ARCHIVE
+        DESTINATION ${INSTALL_LIBDIR}
+    RUNTIME
+        DESTINATION ${INSTALL_BINDIR}
+    LIBRARY
+        DESTINATION ${INSTALL_LIBDIR}
+    PUBLIC_HEADER
+        DESTINATION ${INSTALL_INCLUDEDIR}/msg
+)
+
+install(SCRIPT cmake/install_info.cmake)  # 安装时执行install_info.cmake脚本
+install(CODE "message(STATUS \"CMakeLists.txt: I am CODE\")")  # 安装时执行指定CMake命令
