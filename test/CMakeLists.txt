@@ -73,6 +73,7 @@ set_tests_properties(test1 PROPERTIES TIMEOUT 10)  # 设置test的TIMEOUT, 即�
 set_tests_properties(test_fail PROPERTIES WILL_FAIL true)  # test_fail以程序运行失败作为测试成功的条件
 
 option(TEST_COMPILE "try compile" OFF)
+
 if (TEST_COMPILE)
     # 测试编译器是否能正常运作的程序 (与ctest不同, try_compile在CMake配置期间就运行了)
     # 测试是否可以通过编译

@@ -65,6 +65,10 @@ CMAKE_<LANG>_VISIBILITY_PRESET可以设置LANG语言的动态库的符号可见�
 set(CMAKE_C_VISIBILITY_PRESET hidden)  # C语言动态库的符号默认不可见
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)  # 隐藏内联函数的符号
 
+if(NOT CMAKE_BUILD_TYPE)  # 若CMAKE_BUILD_TYPE为空(未定义)
+    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)  # 设置CACHE变量CMAKE_BUILD_TYPE
+endif()
+
 #[[
 定义输出目录
 GNUInstallDirs中定义了GNU标准的输出文件夹名字, 例如:
@@ -84,6 +88,8 @@ set(INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} CACHE PATH "Installation directory fo
 set(INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR} CACHE PATH "Installation directory for executables")
 set(INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME} CACHE PATH "Installation directory for header files")
 set(INSTALL_RESOURCEDIR resource/${PROJECT_NAME} CACHE PATH "Installation directory for resource files")  # 关联文件
+
+option(JUST_BUILD "Just build targets" ON)
 
 if(WIN32 AND NOT CYGWIN)
     set(DEF_INSTALL_CMAKEDIR cmake)
@@ -115,27 +121,44 @@ else()  # 不构建库, 库的代码被直接写到hello中
     target_include_directories(hello PUBLIC include)
 endif()
 
-message(STATUS "Hello, CMake!")  # 显示一条STATUS信息
-# message(WARNING "I am warning.")  # 显示一条WARNING信息
-# message(FATAL_ERROR "I am error!")  # 显示一条错误信息, CMake停止运行
-# message(SEND_ERROR "I am send_error!")  # 显示一条错误信息, CMake不会停止运行, 但不生成内容(无法构建项目)
+# 这部分代码只是CMake测试所用
+if (NOT JUST_BUILD)
+    message(STATUS "Hello, CMake!")  # 显示一条STATUS信息
+    # message(WARNING "I am warning.")  # 显示一条WARNING信息
+    # message(FATAL_ERROR "I am error!")  # 显示一条错误信息, CMake停止运行
+    # message(SEND_ERROR "I am send_error!")  # 显示一条错误信息, CMake不会停止运行, 但不生成内容(无法构建项目)
 
-if(NOT CMAKE_BUILD_TYPE)  # 若CMAKE_BUILD_TYPE为空(未定义)
-    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)  # 设置CACHE变量CMAKE_BUILD_TYPE
-endif()
+    include(cmake/print_info.cmake)
+    include(cmake/print_info.cmake)  # 第二次导入将不会再输出文件信息, 但是会输出"include print_info"
+    message(STATUS "PRINT_INFO = ${PRINT_INFO}")  # PRINT_INFO在cmake/print_info.cmake中定义
 
-include(cmake/print_info.cmake)
-include(cmake/print_info.cmake)  # 第二次导入将不会再输出文件信息, 但是会输出"include print_info"
-message(STATUS "PRINT_INFO = ${PRINT_INFO}")  # PRINT_INFO在cmake/print_info.cmake中定义
+    # 关于find_package还有Module模式Config模式等之分
+    find_package(Python3 COMPONENTS Interpreter Development)  # 通过FindPython3.cmake文件(CMake内置的文件)寻找Python3的可执行程序
+    if(Python3_FOUND)
+        message(STATUS "Python3_EXECUTABLE = ${Python3_EXECUTABLE}")  # Python3的可执行程序
+        message(STATUS "Python3_LIBRARIES = ${Python3_LIBRARIES}")  # Python3的库(Windows上为导入库)
+        message(STATUS "Python3_RUNTIME_LIBRARY_DIRS = ${Python3_RUNTIME_LIBRARY_DIRS}")  # Python3的运行时库(Windows上为.dll)
 
-# 关于find_package还有Module模式Config模式等之分
-find_package(Python3 COMPONENTS Interpreter Development)  # 通过FindPython3.cmake文件(CMake内置的文件)寻找Python3的可执行程序
-if(Python3_FOUND)
-    message(STATUS "Python3_EXECUTABLE = ${Python3_EXECUTABLE}")  # Python3的可执行程序
-    message(STATUS "Python3_LIBRARIES = ${Python3_LIBRARIES}")  # Python3的库(Windows上为导入库)
-    message(STATUS "Python3_RUNTIME_LIBRARY_DIRS = ${Python3_RUNTIME_LIBRARY_DIRS}")  # Python3的运行时库(Windows上为.dll)
-else()
-    message(WARNING "Python3 Not Found")
+        execute_process(  # 在CMake配置时运行程序
+                COMMAND  # 代码会按顺序执行
+                ${Python3_EXECUTABLE} "-c" "print(\"I am execute_process\");a"  # 打印内容后, 访问不存在的变量a
+                RESULT_VARIABLE re  # 存储结果
+                OUTPUT_VARIABLE _stdout  # stdout的输出内容
+                ERROR_VARIABLE _stderr  # stderr的输出内容
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                ERROR_STRIP_TRAILING_WHITESPACE
+                )
+
+        message(STATUS "result = ${re}")  # 因为访问不存在的变量a, 故会诱发python错误, result = 1
+        message(STATUS "stdout = ${_stdout}")
+    else()
+        message(WARNING "Python3 Not Found")
+    endif()
+
+    include(cmake/custom_target_test.cmake)  # 添加custom_target_test测试程序
+    include(cmake/func.cmake)
+    fun1(STATUS "I am fun1 (out)")  # include没有新增变量空间, 其中定义的函数可以在外面再次调用
+    mac1(STATUS "I am mac1 (out)" 1 2)
 endif()
 
 # 启用测试
@@ -143,28 +166,7 @@ endif()
 enable_testing()
 add_subdirectory(test)  # 添加测试
 
-if(Python3_FOUND)
-    execute_process(  # 在CMake配置时运行程序
-            COMMAND  # 代码会按顺序执行
-                ${Python3_EXECUTABLE} "-c" "print(\"I am execute_process\");a"  # 打印内容后, 访问不存在的变量a
-            RESULT_VARIABLE re  # 存储结果
-            OUTPUT_VARIABLE _stdout  # stdout的输出内容
-            ERROR_VARIABLE _stderr  # stderr的输出内容
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            ERROR_STRIP_TRAILING_WHITESPACE
-    )
-
-    message(STATUS "result = ${re}")  # 因为访问不存在的变量a, 故会诱发python错误, result = 1
-    message(STATUS "stdout = ${_stdout}")
-endif()
-
-include(cmake/custom_target_test.cmake)  # 添加custom_target_test测试程序
-
 add_subdirectory(hello2)  # 构建hello2
-
-include(cmake/func.cmake)
-fun1(STATUS "I am fun1 (out)")  # include没有新增变量空间, 其中定义的函数可以在外面再次调用
-mac1(STATUS "I am mac1 (out)" 1 2)
 
 install(
     TARGETS
@@ -215,5 +217,8 @@ else()  # 非windows操作系统, 设置rpath
     unset(_rpath)
 endif()
 
-install(SCRIPT cmake/install_info.cmake)  # 安装时执行install_info.cmake脚本
-install(CODE "message(STATUS \"CMakeLists.txt: I am CODE\")")  # 安装时执行指定CMake命令
+# 这部分代码只是CMake测试所用
+if (NOT JUST_BUILD)
+    install(SCRIPT cmake/install_info.cmake)  # 安装时执行install_info.cmake脚本
+    install(CODE "message(STATUS \"CMakeLists.txt: I am CODE\")")  # 安装时执行指定CMake命令
+endif()

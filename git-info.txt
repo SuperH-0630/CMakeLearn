@@ -5,6 +5,7 @@
 
 2021/9/18
 feat: 添加Config文件
+hash: b187ec28
 msg动态库可以通过find_package寻找
 现CMake程序中添加了一个Find_MSG选项
 初次编译该项目时时没效果的(因为还找不到MSG), 执行安装程序后再使用该选项
