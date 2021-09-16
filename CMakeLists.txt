@@ -217,6 +217,8 @@ else()  # 非windows操作系统, 设置rpath
     unset(_rpath)
 endif()
 
+
+install(CODE "message(STATUS \"CMakeLists.txt: INSTALL TO: ${CMAKE_INSTALL_PREFIX}\")")  # 安装时执行指定CMake命令
 # 这部分代码只是CMake测试所用
 if (NOT JUST_BUILD)
     install(SCRIPT cmake/install_info.cmake)  # 安装时执行install_info.cmake脚本
