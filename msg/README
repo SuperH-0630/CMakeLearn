@@ -1,0 +1,12 @@
+﻿msg函数库
+========
+该库的作用时输出一段msg信息
+
+该库包含msg.c和msgBeautiful.c两个源文件
+有两个导出函数:
+    size_t printMSG(char *msg);
+    size_t printMSGBeautiful(char *msg);
+此函数库是CMake-Learn实例项目的测试函数库
+
+包含公开头文件: msg.h
+包含绑定文件: README

@@ -18,3 +18,10 @@ target_sources(msg  # 追加源文件到msg中, 源文件被定义为PUBLIC类�
     PUBLIC
         ${PROJECT_SOURCE_DIR}/include/msg.h
     )
+
+set_target_properties(msg
+
+                      PROPERTIES
+                      PUBLIC_HEADER ${PROJECT_SOURCE_DIR}/include/msg.h  # 公开的头文件
+                      RESOURCE ${CMAKE_CURRENT_SOURCE_DIR}/README)  # 关联的文件, 在install时会被安装
+

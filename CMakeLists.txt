@@ -140,7 +140,9 @@ mac1(STATUS "I am mac1 (out)" 1 2)
 # 设定安装的目录
 set(INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} CACHE PATH "Installation directory for libraries")
 set(INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR} CACHE PATH "Installation directory for executables")
-set(INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE PATH "Installation directory for header files")
+set(INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME} CACHE PATH "Installation directory for header files")
+set(INSTALL_RESOURCEDIR resource/${PROJECT_NAME} CACHE PATH "Installation directory for resource files")  # 关联文件
+
 if(WIN32 AND NOT CYGWIN)
     set(DEF_INSTALL_CMAKEDIR cmake)
 else()
@@ -150,7 +152,7 @@ set(INSTALL_CMAKEDIR ${DEF_INSTALL_CMAKEDIR} CACHE PATH "Installation directory 
 unset(DEF_INSTALL_CMAKEDIR)
 
 # 报告安装路径
-foreach(p LIB BIN INCLUDE CMAKE)
+foreach(p LIB BIN INCLUDE RESOURCE CMAKE)
     message(STATUS "Installing ${CMAKE_INSTALL_PREFIX}/${INSTALL_${p}DIR}")
 endforeach()
 
@@ -165,7 +167,9 @@ install(
     LIBRARY
         DESTINATION ${INSTALL_LIBDIR}
     PUBLIC_HEADER
-        DESTINATION ${INSTALL_INCLUDEDIR}/hello
+        DESTINATION ${INSTALL_INCLUDEDIR}
+    RESOURCE
+        DESTINATION ${INSTALL_RESOURCEDIR}
 )
 
 if(WIN32)  # windows操作系统, 需要赋值dll到指定位置
@@ -211,7 +215,9 @@ install(
     LIBRARY
         DESTINATION ${INSTALL_LIBDIR}
     PUBLIC_HEADER
-        DESTINATION ${INSTALL_INCLUDEDIR}/msg
+        DESTINATION ${INSTALL_INCLUDEDIR}
+    RESOURCE
+        DESTINATION ${INSTALL_RESOURCEDIR}
 )
 
 install(SCRIPT cmake/install_info.cmake)  # 安装时执行install_info.cmake脚本
