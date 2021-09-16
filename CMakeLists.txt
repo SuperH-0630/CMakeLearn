@@ -56,6 +56,16 @@ set(C_STANDARD_REQUIRED OFF)  # 当C_STANDARD_REQUIRED设置为ON时, 则表示�
                               # 设置为OFF时会寻找CMAKE_C_STANDARD指定的标准, 或编译器支持的与他最接近的下一个标准
 
 #[[
+设置导出库符号的可见程度
+一般设置为默认不可见, 然后通过EXPORT修饰符来指定导出的符号
+CMAKE_<LANG>_VISIBILITY_PRESET可以设置LANG语言的动态库的符号可见程度, 具体可参考CMake文档
+---
+可以针对目标的<LANG>_VISIBILITY_PRESET, 已经CMAKE_VISIBILITY_INLINES_HIDDEN属性覆盖这里的设定, 进行颗粒度更细的设定
+]]
+set(CMAKE_C_VISIBILITY_PRESET hidden)  # C语言动态库的符号默认不可见
+set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)  # 隐藏内联函数的符号
+
+#[[
 定义输出目录
 GNUInstallDirs中定义了GNU标准的输出文件夹名字, 例如:
 CMAKE_INSTALL_LIBDIR lib
@@ -68,6 +78,25 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  # 动态库(或者动态库的导入文件)�
         ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
         ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})  # 可执行文件(以及.dll)的输出路径
+
+# 设定安装的目录
+set(INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} CACHE PATH "Installation directory for libraries")
+set(INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR} CACHE PATH "Installation directory for executables")
+set(INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME} CACHE PATH "Installation directory for header files")
+set(INSTALL_RESOURCEDIR resource/${PROJECT_NAME} CACHE PATH "Installation directory for resource files")  # 关联文件
+
+if(WIN32 AND NOT CYGWIN)
+    set(DEF_INSTALL_CMAKEDIR cmake)
+else()
+    set(DEF_INSTALL_CMAKEDIR share/cmake/${PROJECT_NAME})  # unix类系统(Unix, Linux, MacOS, Cygwin等)把cmake文件安装到指定的系统的cmake文件夹中
+endif()
+set(INSTALL_CMAKEDIR ${DEF_INSTALL_CMAKEDIR} CACHE PATH "Installation directory for CMake files")
+unset(DEF_INSTALL_CMAKEDIR)
+
+# 报告安装路径
+foreach(p LIB BIN INCLUDE RESOURCE CMAKE)
+    message(STATUS "Installing ${CMAKE_INSTALL_PREFIX}/${INSTALL_${p}DIR}")
+endforeach()
 
 add_executable(hello main.c)  # 编译一个可执行程序, 使用main.c为源代码, 可执行程序的名字为hello
 
@@ -136,25 +165,6 @@ add_subdirectory(hello2)  # 构建hello2
 include(cmake/func.cmake)
 fun1(STATUS "I am fun1 (out)")  # include没有新增变量空间, 其中定义的函数可以在外面再次调用
 mac1(STATUS "I am mac1 (out)" 1 2)
-
-# 设定安装的目录
-set(INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} CACHE PATH "Installation directory for libraries")
-set(INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR} CACHE PATH "Installation directory for executables")
-set(INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME} CACHE PATH "Installation directory for header files")
-set(INSTALL_RESOURCEDIR resource/${PROJECT_NAME} CACHE PATH "Installation directory for resource files")  # 关联文件
-
-if(WIN32 AND NOT CYGWIN)
-    set(DEF_INSTALL_CMAKEDIR cmake)
-else()
-    set(DEF_INSTALL_CMAKEDIR share/cmake/${PROJECT_NAME})  # unix类系统(Unix, Linux, MacOS, Cygwin等)把cmake文件安装到指定的系统的cmake文件夹中
-endif()
-set(INSTALL_CMAKEDIR ${DEF_INSTALL_CMAKEDIR} CACHE PATH "Installation directory for CMake files")
-unset(DEF_INSTALL_CMAKEDIR)
-
-# 报告安装路径
-foreach(p LIB BIN INCLUDE RESOURCE CMAKE)
-    message(STATUS "Installing ${CMAKE_INSTALL_PREFIX}/${INSTALL_${p}DIR}")
-endforeach()
 
 install(
     TARGETS

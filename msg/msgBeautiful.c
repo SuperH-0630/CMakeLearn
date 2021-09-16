@@ -12,7 +12,7 @@
  * 性质: 导出函数
  * 目标: 把char *msg的内容以漂亮的格式输出到stdout, 并且刷新stdout
  */
-size_t printMSGBeautiful(char *msg) {
+MSG_EXPORT size_t printMSGBeautiful(char *msg) {
     size_t size = printf("MSG:\n");
     size += printMSG_(msg);
     size += printf("\n==========\n");

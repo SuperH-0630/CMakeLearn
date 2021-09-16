@@ -6,8 +6,9 @@
 
 #ifndef CMAKE_LEARN_MSG_H
 #define CMAKE_LEARN_MSG_H
+#include "msgExport.h"  // 由CMake自动生成
 
-size_t printMSG(char *msg);
-size_t printMSGBeautiful(char *msg);
+MSG_EXPORT size_t printMSG(char *msg);
+MSG_EXPORT size_t printMSGBeautiful(char *msg);
 
 #endif //CMAKE_LEARN_MSG_H

@@ -14,7 +14,7 @@
  * 性质: 内部函数
  * 目标: 把char *msg的内容输出到stdout
  */
-size_t printMSG_(char *msg) {
+MSG_NO_EXPORT size_t printMSG_(char *msg) {
     return printf("%s", msg);
 }
 
@@ -23,7 +23,7 @@ size_t printMSG_(char *msg) {
  * 性质: 导出函数
  * 目标: 把char *msg的内容输出到stdout, 并且刷新stdout
  */
-size_t printMSG(char *msg) {
+MSG_EXPORT size_t printMSG(char *msg) {
     size_t size = printMSG_(msg);
     size += printf("\n");
     fflush(stdout);

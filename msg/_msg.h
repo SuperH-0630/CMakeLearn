@@ -7,7 +7,7 @@
 
 #ifndef CMAKE_LEARN__MSG_H
 #define CMAKE_LEARN__MSG_H
-#include "../include/msg.h"
+#include "msg.h"
 
-size_t printMSG_(char *msg);
+MSG_NO_EXPORT size_t printMSG_(char *msg);
 #endif //CMAKE_LEARN__MSG_H
