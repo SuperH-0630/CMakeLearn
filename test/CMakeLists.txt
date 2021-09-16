@@ -113,3 +113,43 @@ if (TEST_RUN)
     message(STATUS "run_test3 = ${run_test3}")  # 输出空字符串
     message(STATUS "run_test4 = ${run_test4}")  # 输出空字符串
 endif()
+
+option(FIND_MSG "Try to find msgTargets from your computer." ON)  # 尝试在电脑寻找msgTargets
+
+if (FIND_MSG)
+    #[[
+    find_package寻找库, 默认是从module模式, 若未找到相应的Find<包名>.cmake文件再到config模式
+    可以直接设定CONFIG选项, 直接进入config模式, 寻找<包名>Config.cmake文件
+    ---
+    第一个参数是包名
+    第二个参数是指定请求的版本号 (也可以不指定, 则不检查版本)
+    COMPONENTS表示请求的内容 (也可以不指定, 则一般会请求默认的内容, 具体需要参考供应商的文档)
+    ---
+    find_package的其他使用可以参见CMake文档
+    ]]
+    find_package(msgTargets "1.0.0" COMPONENTS msg CONFIG)
+    if (msgTargets_FOUND)
+        # IMPORTED_IMPLIB和IMPORTED_IMPLIB_<CONFIG>属性设定了该导入库的动态库导入文件的路径(例如, windows上的.lib, .dll.a)
+        # <CONFIG>一般是DEBUG, RELEASE等, IMPORTED_IMPLIB一般为IMPORTED_IMPLIB_RELEASE
+        get_target_property(imp message::msg IMPORTED_IMPLIB)
+        get_target_property(imp_debug message::msg IMPORTED_IMPLIB_DEBUG)
+        get_target_property(imp_release message::msg IMPORTED_IMPLIB_RELEASE)
+
+        # IMPORTED_LOCATION和IMPORTED_LOCATION_<CONFIG>属性设定了该导入库的动态库运行时文件的路径(例如, windows上的.dll)
+        get_target_property(loc message::msg IMPORTED_LOCATION)
+        get_target_property(loc_debug message::msg IMPORTED_LOCATION_DEBUG)
+        get_target_property(loc_release message::msg IMPORTED_LOCATION_RELEASE)
+
+        message(STATUS "Import lib: ${imp}")
+        message(STATUS "Location lib: ${loc}")
+
+        message(STATUS "Import debug lib: ${imp_debug}")
+        message(STATUS "Location debug lib: ${loc_debug}")
+
+        message(STATUS "Import release lib: ${imp_release}")
+        message(STATUS "Location release lib: ${loc_release}")
+    else()
+        message(STATUS "msgTargets NOT FOUND.")
+        message(STATUS "maybe you should set the cache msgTargets_DIR.")  # <报名>_DIR用于find_package在config模式时在何处寻找.cmake文件
+    endif()
+endif()

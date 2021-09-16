@@ -1,0 +1,17 @@
+﻿#[[
+文件名: msgTargetsConfig.cmake
+使用find_package寻找msg库
+]]
+
+@PACKAGE_INIT@
+
+# 以上为configure_package_config_file自动生成的初始化程序
+
+set_and_check(target ${CMAKE_CURRENT_LIST_DIR}/msgTargets.cmake)
+include(${target})  # 调用msgTargets.cmake导入模块
+
+set(info "@PACKAGE_INSTALL_CMAKEDIR@")  # info信息
+message(STATUS "cmake dir = @PACKAGE_INSTALL_CMAKEDIR@")
+
+check_required_components("msg")  # 说明该库包含的内容(components)
+# 当find_package请求components不再上面设定时, 将会导致find_package失败

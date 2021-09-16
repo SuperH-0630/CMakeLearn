@@ -3,8 +3,16 @@
 该文档包含了每次git提交的详细信息
 提交的hash是滞后写入的
 
+2021/9/18
+feat: 添加Config文件
+msg动态库可以通过find_package寻找
+现CMake程序中添加了一个Find_MSG选项
+初次编译该项目时时没效果的(因为还找不到MSG), 执行安装程序后再使用该选项
+若无法找到安装好的msg库, 请设定msgTargets_DIR为安装目录下cmake文件的位置
+
 2021/9/17
 feat: 添加export
+hash: db6cd974
 
 2021/9/17
 feat: 添加导出头文件

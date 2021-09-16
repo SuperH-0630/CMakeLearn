@@ -102,3 +102,30 @@ install(EXPORT  # 安装该输出目标
             "message::"
         DESTINATION
             ${INSTALL_CMAKEDIR})
+
+# CMakePackageConfigHelpers 辅助构建 Config.cmake和ConfigVersion.cmake
+include(CMakePackageConfigHelpers)
+
+# 用于生成ConfigVersion.cmake文件, 如果需要更加详细的版本控制则需要自己实现ConfigVersion.cmake文件
+# COMPATIBILITY表示兼容模式
+#   AnyNewerVersion: 向下兼容
+#   SameMinorVersion: 主版本号相同, 向下兼容
+#   SameMinorVersion：主和次版本号相同, 向下兼容
+#   ExactVersion: 仅当所请求的版本与其自身的版本号完全匹配(不考虑调整版本)时，才认为该软件包兼容
+# 该文件主要在find_package时检查请求的版本号和find_package寻找到的包的版本号是否兼容
+write_basic_package_version_file(${CMAKE_BINARY_DIR}/cmake-tmp/msgTargetsConfigVersion.cmake
+                                 VERSION "1.0.0"  # 版本号
+                                 COMPATIBILITY AnyNewerVersion)
+
+# 生成Config.cmake文件
+configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/msgTargetsConfig.cmake.in
+                              ${CMAKE_BINARY_DIR}/cmake-tmp/msgTargetsConfig.cmake
+                              INSTALL_DESTINATION ${INSTALL_CMAKEDIR}
+                              PATH_VARS INSTALL_CMAKEDIR  # 导入一个变量到msgTargetsConfig.cmake.in
+                              INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})  # 指定安装目录 (用于生成相对路径)
+
+install(FILES
+            ${CMAKE_BINARY_DIR}/cmake-tmp/msgTargetsConfig.cmake
+            ${CMAKE_BINARY_DIR}/cmake-tmp/msgTargetsConfigVersion.cmake
+        DESTINATION
+            ${INSTALL_CMAKEDIR})
