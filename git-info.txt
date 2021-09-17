@@ -3,6 +3,32 @@
 该文档包含了每次git提交的详细信息
 提交的hash是滞后写入的
 
+2021/9/18
+feat: 添加FindXXX.cmake示例程序
+hash: 06c24c08
+
+2021/9/17
+feat: 更新CMakeExternalProject模块
+hash: dcfbf5e5
+
+2021/9/17
+fix: 解决CMAKE_SIZEOF_VOID_P未定义的问题
+hash: 6535985a
+当某种原因(未知)而导致CMAKE_SIZEOF_VOID_P未设定时, 执行try_run来计算该值
+
+2021/9/17
+feat: 添加安装模块
+hash: 9201379d
+测试CFEP的安装程序是否可用
+
+2021/9/17
+fix: 添加CMakeFindExternalProject对Linux的支持
+hash: 4ecfc6a4
+问题在于Linux下cmake安装的文件夹的位置
+原本是share/cmake/<PROJECT-NAME>
+现在改为share/cmake/<NAME>
+<NAME>可以指定或默认为PROJECT-NAME
+
 2021/9/17
 feat: 添加CMakeFindExternalProject模块
 hash: dd4245a7
