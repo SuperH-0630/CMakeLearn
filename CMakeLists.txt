@@ -64,6 +64,19 @@ cfep_find_dir(msgTargets
 add_executable(learn main.c)
 target_link_libraries(learn message::msg)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+find_package(PythonSelf)
+
+if (PythonSelf_FOUND)
+    message(STATUS "PythonSelf found.")
+    message(STATUS "PythonSelf = ${PythonSelf}")
+    message(STATUS "PythonSelf_LIBRARIES = ${PythonSelf_LIBRARIES}")
+    message(STATUS "PythonSelf_LIBS = ${PythonSelf_LIBS}")  # FindPythonSelf.cmake 中定义的变量, 在这里可以直接访问
+    message(STATUS "Python3_EXECUTABLE = ${Python3_EXECUTABLE}")
+else()
+    message(STATUS "PythonSelf not found.")
+endif()
+
 wi_copy_import(TARGETS message::msg)
 if (msgTargets_CFEP_FOUND)  # 拷贝内容
     if (WIN32)  # 只有win32才执行, 因为安装时cfep_install会直接拷贝整个文件夹(包括这里生成的.dll)到安装目录
