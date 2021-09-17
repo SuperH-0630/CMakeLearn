@@ -40,6 +40,13 @@ function(WI_set_install_dir_quiet)
 endfunction()
 
 function(WI_set_install_dir)
+    if (NOT CMAKE_SIZEOF_VOID_P)  # 如果还未设定CMAKE_SIZEOF_VOID_P, 则现在设定该值
+        try_run(run_re com_re ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/_void_p_test.c)
+        if (com_re)  # 编译正常
+            set(CMAKE_SIZEOF_VOID_P ${run_re} CACHE INTERNAL ”“ FORCE)
+        endif()
+    endif()
+
     set(_argn ${ARGN})
     WI_set_install_dir_quiet(${_argn})
 
