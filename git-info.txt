@@ -3,6 +3,28 @@
 该文档包含了每次git提交的详细信息
 提交的hash是滞后写入的
 
+2021/9/17
+feat: 添加CMakeFindExternalProject模块
+msg封装为库模块
+通过CMakeFindExternalProject模块访问msg和安装msg
+同时添加一些测试的虚拟.dll和.exe
+
+2021/9/16
+日志:
+此处涉及到构建外部项目
+需要的是在cmake config过程中就构建项目
+然后可以通过find_package寻找到该项目
+并且该项目的构建尽量与原项目隔离
+---
+实际做法:
+find_package定位一个库
+若没找到则新建一个文件, 生成一个CMakeLists.txt
+然后执行该CMakeLists.txt, 并构建项目
+然后定位CMake文件夹的位置
+然后重新find_package
+---
+使用库: CMakeFindExternalProject
+
 2021/9/16
 feat: 添加Config文件
 hash: b187ec28

@@ -1,5 +1,5 @@
 ﻿#include <stdio.h>
-#include "msg.h"
+#include "include/msg.h"
 
 int main(int argc, char **argv) {
     printMSG("I am msg");
