@@ -94,7 +94,7 @@ option(JUST_BUILD "Just build targets" ON)
 if(WIN32 AND NOT CYGWIN)
     set(DEF_INSTALL_CMAKEDIR cmake)
 else()
-    set(DEF_INSTALL_CMAKEDIR share/cmake/${PROJECT_NAME})  # unix类系统(Unix, Linux, MacOS, Cygwin等)把cmake文件安装到指定的系统的cmake文件夹中
+    set(DEF_INSTALL_CMAKEDIR share/cmake/msgTargets)  # unix类系统(Unix, Linux, MacOS, Cygwin等)把cmake文件安装到指定的系统的cmake文件夹中
 endif()
 set(INSTALL_CMAKEDIR ${DEF_INSTALL_CMAKEDIR} CACHE PATH "Installation directory for CMake files")
 unset(DEF_INSTALL_CMAKEDIR)

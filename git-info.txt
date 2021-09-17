@@ -5,6 +5,7 @@
 
 2021/9/17
 feat: 添加CMakeFindExternalProject模块
+hash: dd4245a7
 msg封装为库模块
 通过CMakeFindExternalProject模块访问msg和安装msg
 同时添加一些测试的虚拟.dll和.exe
