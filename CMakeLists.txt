@@ -82,3 +82,5 @@ wi_install(INSTALL TARGETS learn)
 wi_install_import(TARGETS message::msg)
 wi_install_dll_bin(DIRS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 wi_install_dll_dir(DIRS ${CMAKE_BINARY_DIR})
+
+CFEP_install(msgTargets)
