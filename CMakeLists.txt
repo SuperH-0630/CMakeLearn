@@ -66,9 +66,11 @@ target_link_libraries(learn message::msg)
 
 wi_copy_import(TARGETS message::msg)
 if (msgTargets_CFEP_FOUND)  # 拷贝内容
-    file(TOUCH ${msgTargets_CFEP_INSTALL}/bin/test_a.dll)  # 为检验wi_copy_dll_bin创建而创建
-    file(TOUCH ${msgTargets_CFEP_INSTALL}/test_a2.dll)  # 为检验wi_copy_dll_dir创建而创建
-    file(TOUCH ${msgTargets_CFEP_INSTALL}/test_a2.exe)  # 为检验wi_copy_dll_dir创建而创建
+    if (WIN32)  # 只有win32才执行, 因为安装时cfep_install会直接拷贝整个文件夹(包括这里生成的.dll)到安装目录
+        file(TOUCH ${msgTargets_CFEP_INSTALL}/bin/test_a.dll)  # 为检验wi_copy_dll_bin创建而创建
+        file(TOUCH ${msgTargets_CFEP_INSTALL}/test_a2.dll)  # 为检验wi_copy_dll_dir创建而创建
+        file(TOUCH ${msgTargets_CFEP_INSTALL}/test_a2.exe)  # 为检验wi_copy_dll_dir创建而创建
+    endif ()
 
     wi_copy_dll_bin(DIRS ${msgTargets_CFEP_INSTALL}/bin)
     wi_copy_dll_dir(DIRS ${msgTargets_CFEP_INSTALL})
@@ -83,4 +85,4 @@ wi_install_import(TARGETS message::msg)
 wi_install_dll_bin(DIRS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 wi_install_dll_dir(DIRS ${CMAKE_BINARY_DIR})
 
-CFEP_install(msgTargets)
+cfep_install(msgTargets)
